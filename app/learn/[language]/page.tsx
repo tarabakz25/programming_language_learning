@@ -1,7 +1,11 @@
-import { getSections, getLanguages } from "@/lib/content";
+import { getSectionMetas, getLanguages } from "@/lib/content";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { createClient } from "@/lib/supabase/server";
+import { getSectionProgressForLanguage } from "@/lib/progress";
+import { CheckCircle2, Circle, PlayCircle } from "lucide-react";
 
 export async function generateStaticParams() {
   const languages = await getLanguages();
@@ -16,12 +20,50 @@ export default async function LanguagePage({
   params: Promise<{ language: string }>;
 }) {
   const { language } = await params;
-  const sections = await getSections(language);
+  const sectionMetas = await getSectionMetas(language);
   const languages = await getLanguages();
 
   if (!languages.includes(language)) {
     notFound();
   }
+
+  // Get user progress if logged in
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let progressMap: Record<string, "not_started" | "in_progress" | "completed"> = {};
+  if (user) {
+    progressMap = await getSectionProgressForLanguage(user.id, language);
+  }
+
+  const getStatusBadge = (sectionSlug: string) => {
+    const status = progressMap[sectionSlug] || "not_started";
+    switch (status) {
+      case "completed":
+        return (
+          <Badge variant="success" className="gap-1">
+            <CheckCircle2 className="w-3 h-3" />
+            完了
+          </Badge>
+        );
+      case "in_progress":
+        return (
+          <Badge variant="warning" className="gap-1">
+            <PlayCircle className="w-3 h-3" />
+            進行中
+          </Badge>
+        );
+      default:
+        return (
+          <Badge variant="muted" className="gap-1">
+            <Circle className="w-3 h-3" />
+            未着手
+          </Badge>
+        );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -43,18 +85,21 @@ export default async function LanguagePage({
           </p>
 
           <div className="grid gap-4 md:grid-cols-2">
-            {sections.map((section) => (
+            {sectionMetas.map((section) => (
               <Link
-                key={section}
-                href={`/learn/${language}/${section}`}
+                key={section.slug}
+                href={`/learn/${language}/${section.slug}`}
               >
                 <Card className="hover:bg-accent transition-colors cursor-pointer h-full">
                   <CardHeader>
-                    <CardTitle className="capitalize">
-                      {section.replace(/-/g, " ")}
-                    </CardTitle>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <CardTitle className="flex-1">
+                        {section.title}
+                      </CardTitle>
+                      {getStatusBadge(section.slug)}
+                    </div>
                     <CardDescription>
-                      このセクションを学習する
+                      {section.description || "このセクションを学習する"}
                     </CardDescription>
                   </CardHeader>
                 </Card>

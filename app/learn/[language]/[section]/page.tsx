@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { MDXContent } from "@/lib/mdx";
 import { DocsLayout } from "@/components/layout/docs-layout";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import { getSectionProgressForLanguage } from "@/lib/progress";
+import { SectionProgressButton } from "@/components/section-progress-button";
 
 export async function generateStaticParams() {
   const languages = await getLanguages();
@@ -38,6 +41,18 @@ export default async function SectionPage({
 
   const sections = await getSections(language);
 
+  // Get user progress if logged in
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let currentStatus: "not_started" | "in_progress" | "completed" = "not_started";
+  if (user) {
+    const progressMap = await getSectionProgressForLanguage(user.id, language);
+    currentStatus = (progressMap[section] as typeof currentStatus) || "not_started";
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border">
@@ -51,6 +66,19 @@ export default async function SectionPage({
         </div>
       </header>
       <DocsLayout language={language} sections={sections}>
+        <div className="mb-6 flex justify-end">
+          {user ? (
+            <SectionProgressButton
+              language={language}
+              section={section}
+              initialStatus={currentStatus}
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              進捗を保存するにはログインしてください
+            </p>
+          )}
+        </div>
         <MDXContent source={content.source} />
       </DocsLayout>
     </div>
