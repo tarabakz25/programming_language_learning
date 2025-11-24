@@ -48,9 +48,6 @@ Supabaseダッシュボードで以下を設定:
    - Google OAuth
    - GitHub OAuth
 
-   ※ 各プロバイダー（Google/GitHub）の設定画面に入力する「Callback URL（Redirect URI）」には、SupabaseプロジェクトのURLを使用します:
-   `https://[YOUR-PROJECT-ID].supabase.co/auth/v1/callback`
-
 2. **Authentication > URL Configuration** で以下を設定:
    - Site URL: `http://localhost:3000` (開発環境)
    - Redirect URLs: `http://localhost:3000/auth/callback`

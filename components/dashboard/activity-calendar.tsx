@@ -3,18 +3,13 @@
 import { cn } from "@/lib/utils";
 
 export function ActivityCalendar() {
-  // Mock data: Fixed pattern to avoid hydration mismatch and impurities
+  // Mock data: Array of 90 days (approx 3 months) with random intensity
   const days = Array.from({ length: 84 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() - (83 - i));
-    // Create a deterministic pseudo-random pattern based on the date
-    const dayNum = date.getDate();
-    const monthNum = date.getMonth();
-    const pseudoRandom = (dayNum * 7 + monthNum * 13) % 10;
-    
     return {
       date: date.toISOString().split("T")[0],
-      level: pseudoRandom > 6 ? Math.floor((pseudoRandom - 6) / 1) : 0, // Deterministic mock data
+      level: Math.random() > 0.7 ? Math.floor(Math.random() * 4) + 1 : 0, // 0-4 intensity
     };
   });
 
@@ -33,7 +28,7 @@ export function ActivityCalendar() {
                 day.level === 1 && "bg-blue-900/40",
                 day.level === 2 && "bg-blue-700/60",
                 day.level === 3 && "bg-blue-500/80",
-                day.level >= 4 && "bg-blue-400"
+                day.level === 4 && "bg-blue-400"
               )}
             />
           ))}
@@ -42,3 +37,4 @@ export function ActivityCalendar() {
     </div>
   );
 }
+
