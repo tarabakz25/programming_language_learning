@@ -17,9 +17,9 @@ export async function generateStaticParams() {
 export default async function LanguagePage({
   params,
 }: {
-  params: Promise<{ language: string }>;
+  params: { language: string };
 }) {
-  const { language } = await params;
+  const { language } = params;
   const sectionMetas = await getSectionMetas(language);
   const languages = await getLanguages();
 
@@ -86,6 +86,7 @@ export default async function LanguagePage({
 
           <div className="flex flex-col gap-4 max-w-2xl mx-auto">
             {sectionMetas.map((section, index) => (
+              // section.slug はファイル名から算出され、セクション詳細ページの getContent() と一致する
               <Link
                 key={section.slug}
                 href={`/learn/${language}/${section.slug}`}

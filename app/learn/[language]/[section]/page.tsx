@@ -24,9 +24,9 @@ export async function generateStaticParams() {
 export default async function SectionPage({
   params,
 }: {
-  params: Promise<{ language: string; section: string }>;
+  params: { language: string; section: string };
 }) {
-  const { language, section } = await params;
+  const { language, section } = params;
   const languages = await getLanguages();
   if (!languages.includes(language)) {
     notFound();
@@ -34,6 +34,7 @@ export default async function SectionPage({
 
   let content;
   try {
+    // セクション slug と MDX ファイル名が一致している場合のみコンテンツを表示する
     content = await getContent(language, section);
   } catch {
     notFound();
