@@ -5,19 +5,15 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
+import { Suspense } from "react";
 
-export default function AuthCodeErrorPage() {
+function AuthCodeErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-red-500/10 rounded-full blur-[120px]" />
-      </div>
-
-      <Card className="w-full max-w-md relative z-10 border-red-500/20 glass">
+    <Card className="w-full max-w-md relative z-10 border-red-500/20 glass">
         <CardHeader className="text-center">
           <div className="mx-auto w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
             <AlertCircle className="w-6 h-6 text-red-500" />
@@ -47,7 +43,21 @@ export default function AuthCodeErrorPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
   );
 }
 
+export default function AuthCodeErrorPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-red-500/10 rounded-full blur-[120px]" />
+      </div>
+      
+      <Suspense fallback={
+        <div className="text-white">Loading error details...</div>
+      }>
+        <AuthCodeErrorContent />
+      </Suspense>
+    </div>
+  );
+}

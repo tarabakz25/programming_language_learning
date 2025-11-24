@@ -1,9 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"; // Assuming these exist, if not I will use simple title attribute or install tooltip later. 
-// Actually I better check if tooltip component exists. I don't see it in the file list earlier.
-// I will just use title attribute for simplicity first or simple divs.
 
 export function ActivityCalendar() {
   // Mock data: Array of 90 days (approx 3 months) with random intensity
