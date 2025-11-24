@@ -84,21 +84,26 @@ export default async function LanguagePage({
             セクションを選択して学習を開始してください
           </p>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {sectionMetas.map((section) => (
+          <div className="flex flex-col gap-4 max-w-2xl mx-auto">
+            {sectionMetas.map((section, index) => (
               <Link
                 key={section.slug}
                 href={`/learn/${language}/${section.slug}`}
               >
-                <Card className="hover:bg-accent transition-colors cursor-pointer h-full">
+                <Card className="hover:bg-accent transition-colors cursor-pointer">
                   <CardHeader>
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <CardTitle className="flex-1">
-                        {section.title}
-                      </CardTitle>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-muted-foreground font-bold text-sm shrink-0">
+                          {index + 1}
+                        </div>
+                        <CardTitle className="text-xl">
+                          {section.title}
+                        </CardTitle>
+                      </div>
                       {getStatusBadge(section.slug)}
                     </div>
-                    <CardDescription>
+                    <CardDescription className="pl-12 mt-2">
                       {section.description || "このセクションを学習する"}
                     </CardDescription>
                   </CardHeader>
