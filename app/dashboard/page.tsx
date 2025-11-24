@@ -58,7 +58,7 @@ export default async function DashboardPage() {
                     Welcome back!
                 </h1>
                 <p className="text-muted-foreground">
-                    You're on a 3-day streak. Keep it up!
+                    You&apos;re on a 3-day streak. Keep it up!
                 </p>
                 <div className="mt-6 p-6 rounded-2xl border border-white/5 bg-black/20 backdrop-blur-sm">
                     <ActivityCalendar />
