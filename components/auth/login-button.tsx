@@ -3,15 +3,22 @@
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { Github, Chrome } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export function LoginButton() {
   const supabase = createClient();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") || "/dashboard";
+
+  const getRedirectUrl = () => {
+    return `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
+  };
 
   const handleGoogleLogin = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: getRedirectUrl(),
       },
     });
   };
@@ -20,7 +27,7 @@ export function LoginButton() {
     await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: getRedirectUrl(),
       },
     });
   };
@@ -38,4 +45,3 @@ export function LoginButton() {
     </div>
   );
 }
-
