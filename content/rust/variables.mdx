@@ -1,0 +1,135 @@
+# 変数と可変性
+
+## 概要
+
+このセクションでは、Rustにおける**変数と可変性（mutability）**について学びます。  
+Rustの変数は基本的に「**不変（イミュータブル）**」であり、安全なコードを書くための重要な仕組みになっています。
+
+公式な詳しい解説は、Rust公式本日本語版の「[3.1. 変数と可変性](https://doc.rust-jp.rs/book-ja/ch03-01-variables-and-mutability.html)」にあります。
+
+## 解説
+
+### `let` による変数宣言
+
+Rustでは、`let` キーワードを使って変数を宣言します。  
+型は多くの場合コンパイラが自動的に推論してくれるため、明示的に書かなくてもかまいません。
+
+```rust
+let x = 5;      // 不変な変数 x を宣言
+println!("x = {}", x);
+```
+
+上のコードでは `x` は**不変**なので、あとから値を変えることはできません。
+
+### 可変な変数：`let mut`
+
+値を変更したい場合は、`mut` キーワードを付けて**可変（mutable）**な変数として宣言します。
+
+```rust
+let mut count = 0;   // 可変な変数
+println!("count = {}", count);
+
+count = count + 1;   // 値の変更が可能
+println!("count = {}", count);
+```
+
+`mut` を付け忘れて変更しようとすると、コンパイル時にエラーになります。  
+これにより「本当は変えたくなかった値」を誤って書き換えるバグを防げます。
+
+### 型注釈（オプション）
+
+必要に応じて、コロン `:` を使って型を明示することもできます。
+
+```rust
+let x: i32 = 10;       // 32ビット符号付き整数
+let y: f64 = 3.14;     // 64ビット浮動小数点数
+println!("x = {}, y = {}", x, y);
+```
+
+### 変数の「シャドーイング」
+
+Rustでは、同じ名前の変数を**再度 `let` で宣言**することができます。  
+これを**シャドーイング（shadowing）**と呼びます。
+
+```rust
+let spaces = "   ";        // 文字列スライス
+let spaces = spaces.len(); // 新しい変数 spaces（型は usize）
+
+println!("spaces = {}", spaces);
+```
+
+この場合、2つ目の `spaces` が1つ目を「隠す（shadow）」ため、以降は数値として扱われます。  
+`mut` を使わずに、値の型を変えたいときに便利です。
+
+## 例
+
+次は、ユーザーの年齢を読み取り、1年後の年齢を表示する簡単なプログラムです。
+
+```rust
+use std::io;
+
+fn main() {
+    println!("あなたの年齢を入力してください:");
+
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).expect("入力エラー");
+
+    let age: u32 = input.trim().parse().expect("数値を入力してください");
+
+    // age は不変変数
+    println!("現在の年齢: {}", age);
+
+    // next_age は新しい不変変数
+    let next_age = age + 1;
+    println!("1年後の年齢: {}", next_age);
+}
+```
+
+ポイント:
+
+- `let mut input = String::new();` のように、**書き換えが必要な変数だけ `mut` を付ける**。
+- それ以外は基本的に不変にしておくと、コードの意図が明確になり、安全性も上がります。
+
+より詳しい内容や追加の例は、「[The Rust Programming Language 日本語版](https://doc.rust-jp.rs/book-ja/)」を参照してください。
+
+## 確認問題
+
+<Quiz
+  questions={[
+    {
+      question: "次のうち、Rustで「可変な変数」を正しく宣言しているものはどれですか？",
+      options: [
+        "let x = 5;",
+        "mut let x = 5;",
+        "let mut x = 5;",
+        "var x = 5;"
+      ],
+      correctAnswer: 2,
+      explanation: "`let mut x = 5;` のように、`let` の後に `mut` を付けて宣言します。"
+    },
+    {
+      question: "次のコードはコンパイルできますか？\n\nlet x = 10;\nx = 20;",
+      options: [
+        "問題なくコンパイルできる",
+        "警告は出るがコンパイルできる",
+        "コンパイルエラーになる",
+        "実行時エラーになる"
+      ],
+      correctAnswer: 2,
+      explanation: "Rustの変数はデフォルトで不変なので、`x` を再代入しようとするとコンパイルエラーになります。"
+    },
+    {
+      question: "シャドーイングについて正しい説明はどれですか？",
+      options: [
+        "可変変数を別の値で上書きすること",
+        "同じ名前の変数を `let` で再宣言して、前の変数を隠すこと",
+        "変数を別のスコープから参照すること",
+        "変数をヒープ領域に移動すること"
+      ],
+      correctAnswer: 1,
+      explanation: "シャドーイングとは、同じ名前の新しい変数を `let` で宣言して、前の変数を隠す（shadow）ことです。"
+    }
+  ]}
+/>
+
+

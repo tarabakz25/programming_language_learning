@@ -5,29 +5,27 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 
 function AuthCodeErrorContent() {
   const searchParams = useSearchParams();
-  const [errorInfo, setErrorInfo] = useState<{ error: string | null; description: string | null }>({
-    error: searchParams.get("error"),
-    description: searchParams.get("error_description"),
-  });
+  const queryError = searchParams.get("error");
+  const queryDescription = searchParams.get("error_description");
 
-  useEffect(() => {
-    // Also check hash params if query params are missing or for robustness
-    if (typeof window !== "undefined" && window.location.hash) {
-      const hashParams = new URLSearchParams(window.location.hash.substring(1)); // remove #
-      const hashError = hashParams.get("error");
-      const hashDesc = hashParams.get("error_description");
-      if (hashError) {
-        setErrorInfo({
-          error: hashError,
-          description: hashDesc,
-        });
-      }
+  // クエリパラメータを優先しつつ、ハッシュに値があればそちらも参照する
+  let error = queryError;
+  let description = queryDescription;
+
+  if (typeof window !== "undefined" && window.location.hash) {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1)); // remove #
+    const hashError = hashParams.get("error");
+    const hashDesc = hashParams.get("error_description");
+
+    if (hashError) {
+      error = hashError;
+      description = hashDesc;
     }
-  }, []);
+  }
 
   return (
     <Card className="w-full max-w-md relative z-10 border-red-500/20 glass">
@@ -42,8 +40,8 @@ function AuthCodeErrorContent() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/10 text-sm font-mono text-red-400 break-all">
-            <p className="font-bold">{errorInfo.error || "Unknown Error"}</p>
-            <p className="mt-1">{errorInfo.description || "No description provided"}</p>
+            <p className="font-bold">{error || "Unknown Error"}</p>
+            <p className="mt-1">{description || "No description provided"}</p>
           </div>
           
           <div className="flex flex-col gap-2">
