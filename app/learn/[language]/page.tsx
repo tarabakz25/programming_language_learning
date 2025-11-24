@@ -17,9 +17,9 @@ export async function generateStaticParams() {
 export default async function LanguagePage({
   params,
 }: {
-  params: { language: string };
+  params: { language: string } | Promise<{ language: string }>;
 }) {
-  const { language } = params;
+  const { language } = await Promise.resolve(params);
   const sectionMetas = await getSectionMetas(language);
   const languages = await getLanguages();
 

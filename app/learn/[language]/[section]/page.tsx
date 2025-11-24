@@ -24,9 +24,9 @@ export async function generateStaticParams() {
 export default async function SectionPage({
   params,
 }: {
-  params: { language: string; section: string };
+  params: { language: string; section: string } | Promise<{ language: string; section: string }>;
 }) {
-  const { language, section } = params;
+  const { language, section } = await Promise.resolve(params);
   const languages = await getLanguages();
   if (!languages.includes(language)) {
     notFound();
