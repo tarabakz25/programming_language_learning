@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# プログラミング言語学習プラットフォーム
 
-## Getting Started
+わかりやすくプログラミング言語を学べる動的な学習サイトです。
 
-First, run the development server:
+## 機能
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- 📚 **わかりやすい解説記事**: 公式ドキュメントの構造を保ちながら、初心者にも理解しやすい解説を提供
+- 🔐 **認証機能**: Google/GitHubアカウントでログイン可能（Supabase使用）
+- 💡 **実践的な例**: 各セクションに実際に動作するコード例を用意
+- ✅ **確認問題**: 各セクションの最後に3択または4択形式のクイズを提供
+- 🌙 **ダークモード対応**: システム設定に応じて自動切り替え
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 技術スタック
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **フレームワーク**: Next.js 16 (App Router)
+- **スタイリング**: Tailwind CSS v4
+- **認証**: Supabase Auth
+- **コンテンツ**: MDX (next-mdx-remote)
+- **UIコンポーネント**: shadcn/ui
+- **パッケージマネージャー**: Bun
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## セットアップ
 
-## Learn More
+### 1. 依存関係のインストール
 
-To learn more about Next.js, take a look at the following resources:
+\`\`\`bash
+bun install
+\`\`\`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Supabaseの設定
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. [Supabase](https://supabase.com)でプロジェクトを作成
+2. プロジェクト設定から以下を取得:
+   - Project URL
+   - Anon Key
+3. `.env.local`ファイルを作成:
 
-## Deploy on Vercel
+\`\`\`env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+\`\`\`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. Supabase認証の設定
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Supabaseダッシュボードで以下を設定:
+
+1. **Authentication > Providers** で以下を有効化:
+   - Google OAuth
+   - GitHub OAuth
+
+2. **Authentication > URL Configuration** で以下を設定:
+   - Site URL: `http://localhost:3000` (開発環境)
+   - Redirect URLs: `http://localhost:3000/auth/callback`
+
+### 4. 開発サーバーの起動
+
+\`\`\`bash
+bun run dev
+\`\`\`
+
+ブラウザで [http://localhost:3000](http://localhost:3000) を開きます。
+
+## コンテンツの追加方法
+
+### 新しい言語の追加
+
+1. `content/[言語名]/` ディレクトリを作成
+2. セクションごとに `.mdx` ファイルを作成
+
+例:
+
+\`\`\`bash
+mkdir -p content/python
+touch content/python/variables.mdx
+\`\`\`
+
+### MDXファイルの構造
+
+`TEMPLATE_INSTRUCTIONS.md` を参照してください。基本的な構造は以下の通りです:
+
+\`\`\`mdx
+# セクションタイトル
+
+## 概要
+...
+
+## 解説
+...
+
+## 例
+\`\`\`python
+# コード例
+\`\`\`
+
+## 確認問題
+<Quiz
+  questions={[...]}
+/>
+\`\`\`
+
+### サンプルコンテンツ
+
+`content/python/variables.mdx` にサンプルコンテンツが含まれています。これを参考に新しいコンテンツを作成できます。
+
+## プロジェクト構造
+
+\`\`\`
+.
+├── app/                    # Next.js App Router
+│   ├── auth/              # 認証関連
+│   ├── learn/             # 学習コンテンツページ
+│   └── page.tsx           # ホームページ
+├── components/            # Reactコンポーネント
+│   ├── auth/              # 認証コンポーネント
+│   ├── layout/            # レイアウトコンポーネント
+│   ├── quiz.tsx           # クイズコンポーネント
+│   └── ui/                # UIコンポーネント
+├── content/               # MDXコンテンツ
+│   └── [language]/        # 言語ごとのディレクトリ
+├── lib/                   # ユーティリティ
+│   ├── content.ts         # コンテンツ読み込み
+│   ├── mdx.tsx            # MDXレンダリング
+│   └── supabase/          # Supabaseクライアント
+└── TEMPLATE_INSTRUCTIONS.md  # コンテンツ生成ガイド
+\`\`\`
+
+## ビルド
+
+\`\`\`bash
+bun run build
+\`\`\`
+
+## ライセンス
+
+MIT
