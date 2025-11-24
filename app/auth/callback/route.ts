@@ -19,9 +19,11 @@ export async function GET(request: Request) {
       } else {
         return NextResponse.redirect(`${origin}${next}`);
       }
+    } else {
+        console.error("Supabase Auth Code Exchange Error:", error);
+        return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(error.name)}&error_description=${encodeURIComponent(error.message)}`);
     }
   }
 
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
+  return NextResponse.redirect(`${origin}/auth/auth-code-error?error=NoCode`);
 }
-
